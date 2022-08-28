@@ -68,7 +68,7 @@ class ArticleFormTest extends TestCase
             ->set('article.content', 'Article content')
             ->set('article.category_id', $category->id)
             ->call('save')
-            ->assertSessionHas('status')
+            ->assertSessionHas('flash.banner')
             ->assertRedirect(route('articles.index'));
 
         $this->assertDatabaseHas('articles', [
@@ -130,7 +130,7 @@ class ArticleFormTest extends TestCase
         Livewire::actingAs($user)->test('article-form', ['article' => $article])
             ->set('image', $newImage)
             ->call('save')
-            ->assertSessionHas('status')
+            ->assertSessionHas('flash.banner')
             ->assertRedirect(route('articles.index'));
 
         Storage::disk('public')
@@ -236,6 +236,8 @@ class ArticleFormTest extends TestCase
 
     /** @test */
     public function can_create_new_category(){
+        Category::whereNotNull('id')->delete();
+
         Livewire::test('article-form')
             ->call('openCategoryForm')
             ->set('newCategory.name', 'Laravel')
