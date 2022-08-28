@@ -224,12 +224,15 @@ class ArticleFormTest extends TestCase
 
     /** @test */
     public function category_must_be_exist_in_database(){
+        Category::whereNotNull('id')->delete();
+
         Livewire::test('article-form')
             ->set('article.title', 'New Article')
             ->set('article.slug', 'new-article')
             ->set('article.content', 'Article content')
             ->set('article.category_id', 1)
             ->call('save')
+            ->dump()
             ->assertHasErrors(['article.category_id' => 'exists'])
             ->assertSeeHtml(__('validation.exists', ['attribute' => 'category id']));
     }
@@ -262,6 +265,8 @@ class ArticleFormTest extends TestCase
 
     /** @test */
     public function can_category_slug_is_required(){
+        Category::whereNotNull('id')->delete();
+
         Livewire::test('article-form')
             ->call('openCategoryForm')
             ->set('newCategory.name', 'Laravel')
@@ -286,6 +291,8 @@ class ArticleFormTest extends TestCase
 
     /** @test */
     public function new_category_slug_must_be_unique(){
+        Category::whereNotNull('id')->delete();
+
         $category = Category::factory()->create();
 
         Livewire::test('article-form')
